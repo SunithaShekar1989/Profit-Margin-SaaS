@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Maturity Assessment Result</h2>
+
+<p><b>Total Score:</b> {{ total_score }}</p>
+<p><b>Maturity Level:</b> {{ maturity }}</p>
+
+<table border="1" cellpadding="6">
+<tr>
+    <th>Category</th>
+    <th>Average Score</th>
+    <th>Weighted Score</th>
+</tr>
+
+{% for r in rows %}
+<tr>
+    <td>{{ r.category }}</td>
+    <td>{{ r.avg }}</td>
+    <td>{{ r.weighted }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<h3>Executive Recommendation</h3>
+<p>{{ recommendation }}</p>
+
+<form method="post" action="/survey/reset/">
+  {% csrf_token %}
+  <button type="submit">Retake Survey</button>
+</form>
+
+<a href="/survey/dashboard/">
+    <button type="button">View Executive Dashboard</button>
+</a>
+
+<a href="/survey/download-report/">
+  <button type="button">Download PDF Report</button>
+</a>
+
+
+<a href="/survey/export-excel/">
+  <button type="button">Export Excel</button>
+</a>
+
+{% endblock %}

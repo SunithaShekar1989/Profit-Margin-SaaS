@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profit Margin Maturity Platform</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+        nav a { margin-right: 15px; font-weight: bold; }
+        .container { max-width: 900px; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/survey/dashboard/">Dashboard</a>
+    <a href="/survey/results/">Results</a>
+    <a href="/survey/page/1/">Survey</a>
+    <a href="/logout/">Logout</a>
+</nav>
+
+<hr>
+
+<div class="container">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

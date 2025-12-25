@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<h2>Survey Page {{ page }}</h2>
+
+<form method="post" action="/survey/submit/">
+    {% csrf_token %}
+    <input type="hidden" name="page" value="{{ page }}">
+
+    {% for q in questions %}
+        <p><b>{{ q.text }}</b></p>
+        {% for o in q.choices.all %}
+            <label>
+                <input type="radio" name="q_{{ q.id }}" value="{{ o.id }}" required>
+                {{ o.text }}
+            </label><br>
+        {% endfor %}
+        <hr>
+    {% endfor %}
+
+    <button type="submit">
+        {% if last %}Submit{% else %}Next{% endif %}
+    </button>
+</form>
+
+{% endblock %}
