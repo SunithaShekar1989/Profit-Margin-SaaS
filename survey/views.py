@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .models import Company, UserProfile
+from .models import get_or_create_profile
 
 PAGE_SIZE = 4
 
@@ -21,7 +22,7 @@ def survey_page(request, page):
     # Lock only if FINAL submitted exists
     if SurveyResponse.objects.filter(
         user=request.user,
-        company=request.user.userprofile.company,
+        company= get_or_create_profile(request.user).company,
         is_submitted=True
     ).exists() and page != 1:
         return redirect('/survey/results/')
@@ -63,7 +64,7 @@ def calculate_scores(request):
 
     responses = SurveyResponse.objects.filter(
         user=request.user,
-        company=request.user.userprofile.company,
+        company=get_or_create_profile(request.user).company,
         is_submitted=True
     ).select_related('question', 'selected_choice')
 
@@ -204,7 +205,7 @@ def submit(request):
         if choice_id:
             SurveyResponse.objects.update_or_create(
                 user=request.user,
-                company=request.user.userprofile.company,
+                company=get_or_create_profile(request.user).company,
                 question=q,
                 defaults={
                     'session_id': sid,
@@ -217,7 +218,7 @@ def submit(request):
     if page == total_pages:
         SurveyResponse.objects.filter(
             user=request.user,
-            company=request.user.userprofile.company
+            company=get_or_create_profile(request.user).company
         ).update(is_submitted=True)
         return redirect('/survey/results/')
 
@@ -265,7 +266,7 @@ def reset_survey(request):
 
     SurveyResponse.objects.filter(
         user=request.user,
-        company=request.user.userprofile.company
+        company=get_or_create_profile(request.user).company
     ).delete()
 
     # Clear session lock
@@ -297,7 +298,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Table
 def download_report(request):
 
     category_avg, weighted_scores, total_score, maturity = calculate_scores(request)
-    company = request.user.userprofile.company
+    company = get_or_create_profile(request.user).company
 
     file_path = f"report_{company.id}.pdf"
     doc = SimpleDocTemplate(file_path, pagesize=A4)
@@ -327,7 +328,7 @@ from django.http import HttpResponse
 def export_excel(request):
 
     category_avg, weighted_scores, total_score, maturity = calculate_scores(request)
-    company = request.user.userprofile.company
+    company = get_or_create_profile(request.user).company
 
     wb = Workbook()
     ws = wb.active

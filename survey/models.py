@@ -60,3 +60,17 @@ class SurveyResponse(models.Model):
     #avg_score = models.FloatField()
 
 # force_migration_refresh
+
+from django.contrib.auth.models import User
+
+def get_or_create_profile(user):
+    profile, created = UserProfile.objects.get_or_create(
+        user=user,
+        defaults={
+            "company": Company.objects.create(
+                name=f"{user.username} Company",
+                industry="General"
+            )
+        }
+    )
+    return profile
